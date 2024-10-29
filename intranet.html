@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDLCV Intranet Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+   <style>
+        /* General Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 20px auto; 
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logo {
+            height: 60px;
+        }
+
+        nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background-color: #45a049;
+        }
+
+        /* Main Content Styles */
+        main {
+           
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        section {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        /* Weather Box Styles */
+        .weather-box {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.weather-content {
+    margin: 10px 0;
+}
+
+.weather-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.weather-icon img {
+    width: 50px;
+    height: 50px;
+}
+
+.weather-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.current-temp {
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+.weather-description {
+    text-transform: capitalize;
+    color: #666;
+}
+
+.weather-details {
+    margin-left: auto;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.forecast-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.forecast-card {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.forecast-card img {
+    width: 40px;
+    height: 40px;
+}
+
+.forecast-date {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.forecast-temp {
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.forecast-description {
+    color: #666;
+    font-size: 0.8em;
+    text-transform: capitalize;
+}
+
+        /* Key Tools Styles */
+        .key-tools {
+            grid-column: span 3;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .tool-item {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tool-icon {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .tool-icon img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .tool-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Updated styles for the top row */
+        .top-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .weather-box, .announcements {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            flex: 1;
+            width: calc(50% - 10px); /* 10px accounts for half of the 20px gap */
+        }
+
+        .announcements ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .announcements li {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .announcements li:last-child {
+            border-bottom: none;
+        }
+
+        /* EVENT AND CALENDAR STYLES */ 
+
+
+        .calendar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #3367d6;
+        }
+        .calendar-frame {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        #currentWeek {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* END EVENT AND CALENDAR STYLES */
+
+        /* HR / HANDBOOK STYLES */ 
+
+        .hr-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .handbook-banner {
+        background-color: #f0f4f8;
+        padding: 24px;
+        border-radius: 8px;
+        margin-bottom: 32px;
+    }
+
+    .handbook-button {
+        display: inline-block;
+        background-color: #2b6cb0;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 6px;
+        text-decoration: none;
+        margin-top: 16px;
+        transition: background-color 0.2s;
+    }
+
+    .handbook-button:hover {
+        background-color: #2c5282;
+    }
+
+    .section {
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        margin-bottom: 16px;
+    }
+
+    .section-header {
+        padding: 16px;
+        background-color: #f8fafc;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        border-radius: 6px;
+    }
+
+    .section-header:hover {
+        background-color: #f0f4f8;
+    }
+
+    .toggle-icon {
+        margin-right: 12px;
+        transition: transform 0.2s;
+    }
+
+    .section-header.expanded .toggle-icon {
+        transform: rotate(90deg);
+    }
+
+    .section-content {
+        padding: 0 16px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+
+    .section-content.expanded {
+        max-height: 500px;
+        padding: 16px;
+    }
+
+    .clickable {
+        cursor: pointer;
+        background-color: #f8fafc;
+        padding: 10px;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+
+    .clickable:hover {
+        background-color: #e2e8f0;
+    }
+
+    .subsection-content {
+        padding: 0 16px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        background-color: #f1f5f9;
+        border-left: 3px solid #2b6cb0;
+        margin-top: 8px;
+        display: none;
+    }
+
+    .subsection-content.expanded {
+        max-height: 500px;
+        padding: 8px 16px;
+        display: block;
+    }
+
+    /* END HR STYLES */
+
+     /* Branding Section Styles */
+     .branding-banner {
+        background-color: #e0f7fa;
+        padding: 24px;
+        border-radius: 8px;
+        margin-bottom: 32px;
+    }
+
+    .branding-button {
+        display: inline-block;
+        background-color: #00796b;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 6px;
+        text-decoration: none;
+        margin-top: 16px;
+        transition: background-color 0.2s;
+    }
+
+    .branding-button:hover {
+        background-color: #004d40;
+    }
+
+    .branding-section {
+        border: 1px solid #b2dfdb;
+        border-radius: 6px;
+        margin-bottom: 16px;
+    }
+
+    .branding-section-header {
+        padding: 16px;
+        background-color: #e0f2f1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        border-radius: 6px;
+    }
+
+    .branding-section-header:hover {
+        background-color: #b2dfdb;
+    }
+
+    .branding-section-content {
+        padding: 0 16px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+
+    .branding-section-content.expanded {
+        max-height: 500px;
+        padding: 16px;
+    }
+
+    .toggle-icon {
+        margin-right: 12px;
+        transition: transform 0.2s;
+    }
+
+    .branding-section-header.expanded .toggle-icon {
+        transform: rotate(90deg);
+    }
+
+    .logo-colors {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .tertiary-colors {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+    }
+
+    .color-code {
+        font-weight: bold;
+    }
+
+    .color-circle {
+  
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        margin-top: 4px;
+    }
+
+    /* END BRANDING STYLES */
+
+        .external-link {
+            margin-left: 6px;
+            font-size: 14px;
+        }
+
+        .section {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        .section-header {
+            padding: 16px;
+            background-color: #f8fafc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            border-radius: 6px;
+        }
+
+        .section-header:hover {
+            background-color: #f0f4f8;
+        }
+
+        .toggle-icon {
+            margin-right: 12px;
+            transition: transform 0.2s;
+        }
+
+        .section-header.expanded .toggle-icon {
+            transform: rotate(90deg);
+        }
+
+        .section-content {
+            padding: 0 16px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .section-content.expanded {
+            max-height: 500px;
+            padding: 16px;
+        }
+
+        .section-content ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .section-content li {
+            padding: 8px 0;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .section-content li:last-child {
+            border-bottom: none;
+        }
+
+        /* Update responsive design */
+        @media (max-width: 768px) {
+            .top-row {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            main {
+                grid-template-columns: 1fr;
+            }
+
+            .weather-box, .key-tools {
+                grid-column: span 1;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav {
+                margin-top: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-button {
+                margin: 5px;
+            }
+
+            .tools-grid {
+                gap: 15px;
+            }
+
+            .tool-icon {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tool-icon {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header>
+            <img src="https://www.mdlcv.org/wp-content/uploads/2021/11/MDLCV_Logo1_S_GreenBlueS.png" alt="MDLCV Logo" class="logo">
+            <nav>
+                <button class="nav-button" data-view="home">Home</button>
+                <button class="nav-button" data-view="hr">Employee Handbook / HR</button>
+                <button class="nav-button" data-view="branding">Branding</button>
+                <button class="nav-button" data-view="communications">Communications</button>
+                <button class="nav-button" data-view="events">Calendar & Events</button>
+            </nav>
+        </header>
+
+        <!-- Main Content --> 
+        <main id="main-content">
+            <!-- Content will be dynamically loaded here -->
+            <section class="announcements">
+                <h2>Latest Announcements</h2>
+                <ul id="announcement-list">
+                    <!-- Announcements will be loaded here dynamically -->
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Views content
+        const views = {
+            home: `
+                <div class="top-row">
+<section class="weather-box">
+    <h2>Weather in Annapolis</h2>
+    <div id="current-weather" class="weather-content">
+        <div class="weather-row">
+            <div class="weather-icon"></div>
+            <div class="weather-main">
+                <span class="current-temp"></span>
+                <span class="weather-description"></span>
+            </div>
+            <div class="weather-details">
+                <p>Humidity: <span class="humidity"></span></p>
+                <p>Wind: <span class="wind"></span></p>
+            </div>
+        </div>
+    </div>
+    <div id="forecast">
+        <div class="forecast-cards"></div>
+    </div>
+</section>
+                    <section class="announcements">
+                        <h2>Latest Announcements</h2>
+                        <ul id="announcement-list">
+
+                        </ul>
+                    </section>
+                </div>
+                <section class="key-tools">
+                    <h2>Key Links and Tools</h2>
+                    <div class="tools-grid">
+                        <div class="tool-item">
+                            <a href="https://login.clicktime.com" target="_blank" rel="noopener noreferrer" class="tool-link">
+                                <div class="tool-icon">
+                                    <img src="https://www.mdlcv.org/wp-content/uploads/2024/10/clicktime.jpg" alt="ClickTime">
+                                </div>
+                                <p class="tool-name">ClickTime</p>
+                            </a>
+                        </div>
+                        <div class="tool-item">
+                            <a href="https://app.goto.com/domain/01eff197-029a-45a4-99c8-11518e3af551/user/83af9281-dcb1-4ede-bc39-d1a5078e2b79/call" target="_blank" rel="noopener noreferrer" class="tool-link">
+                                <div class="tool-icon">
+                                    <img src="https://www.mdlcv.org/wp-content/uploads/2024/10/goto_connect.png" alt="GoTo Phone">
+                                </div>
+                                <p class="tool-name">GoTo Phone</p>
+                            </a>
+                        </div>
+                        <div class="tool-item">
+                            <a href="https://engagifii-identity-live.azurewebsites.net/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fclient_id%3Dng.EngagifiiUI%26redirect_uri%3Dhttps%253A%252F%252Fmdlcv.engagifii.com%252Fauth-callback%26response_type%3Did_token%2520token%26scope%3Dopenid%2520profile%2520email%2520UsersAPI%2520AccreditationAPI%2520BilltrackingApi%2520CommentApi%2520NotesApi%26state%3D52d79ebcae8e4c9ea562c745a38833bc%26nonce%3Dad7d0c839fb14f93ab482dfd717b1abd" target="_blank" rel="noopener noreferrer" class="tool-link">
+                                <div class="tool-icon">
+                                    <img src="https://www.mdlcv.org/wp-content/uploads/2024/10/engagifii_logo.jpg" alt="Engagifii">
+                                </div>
+                                <p class="tool-name">Engagifii</p>
+                            </a>
+                        </div>
+                        <div class="tool-item">
+                            <a href="https://lcv.everyaction.com/Default.aspx?HasCommittee=1" target="_blank" rel="noopener noreferrer" class="tool-link">
+                                <div class="tool-icon">
+                                    <img src="https://www.mdlcv.org/wp-content/uploads/2024/10/everyaction_logo.jpg" alt="EveryAction">
+                                </div>
+                                <p class="tool-name">EveryAction</p>
+                            </a>
+                        </div>
+                        <div class="tool-item">
+                            <a href="https://www.mdlcv.org/" target="_blank" rel="noopener noreferrer" class="tool-link">
+                                <div class="tool-icon">
+                                    <img src="https://www.mdlcv.org/wp-content/uploads/2021/11/MDLCV_Logo1_S_GreenBlueS.png" alt="Maryland LCV">
+                                </div>
+                                <p class="tool-name">Maryland LCV</p>
+                            </a>
+                        </div>
+                        <div class="tool-item">
+                            <a href="https://www.marylandconservation.org/" target="_blank" rel="noopener noreferrer" class="tool-link">
+                                <div class="tool-icon">
+                                    <img src="https://www.marylandconservation.org/wp-content/uploads/2021/11/MDLCV-EdFund_Logo_S_BlueOrange_Reg-1.png" alt="Maryland LCV Education Fund">
+                                </div>
+                                <p class="tool-name">Maryland LCV Education Fund</p>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            `,
+            hr: `
+<div class="handbook-banner">
+    <h2>LCV Employee Handbook</h2>
+    <p>Below you'll find a high-level summary of key policies and benefits. For complete details, please refer to the full Employee Handbook.</p>
+    <a href="https://drive.google.com/file/d/1_YNMr1dSO_HYZZwesci76KTjw164VoYw/view?usp=drive_link" 
+        class="handbook-button" 
+        target="_blank">
+        View Full Employee Handbook <span class="external-link">↗</span>
+    </a>
+</div>
+
+<!-- Main Content -->
+<div class="handbook-sections">
+    <!-- Employment Principles -->
+    <div class="section">
+        <div class="section-header" onclick="toggleSection('principles')">
+            <span class="toggle-icon">▸</span>
+            <h3>Employment Principles</h3>
+        </div>
+        <div class="section-content" id="principles">
+            <ul>
+                <li class="clickable" onclick="toggleSubSection('equal-opportunity')">
+                    Equal Employment Opportunity
+                    <div class="subsection-content" id="equal-opportunity" style="display: none;">
+                        LCV and LCV Education Fund are committed to equal opportunity and do not discriminate based on protected categories. Complaints can be reported to the Director of Human Resources.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('anti-harassment')">
+                    Anti-Harassment Policy
+                    <div class="subsection-content" id="anti-harassment">
+                        LCV prohibits harassment based on protected categories, including verbal, physical, and visual harassment. Report concerns to the Director of Human Resources.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('drug-free')">
+                    Drug-Free Workplace
+                    <div class="subsection-content" id="drug-free">
+                        LCV maintains a drug-free workplace. Alcohol and illegal drug use are strictly prohibited on the premises.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('confidentiality')">
+                    Confidentiality
+                    <div class="subsection-content" id="confidentiality">
+                        Employees must keep proprietary information confidential, including personnel records and campaign materials.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('conflict-of-interest')">
+                    Conflict of Interest
+                    <div class="subsection-content" id="conflict-of-interest">
+                        Employees must avoid conflicts of interest and disclose any potential conflicts to the General Counsel or President.
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Benefits -->
+    <div class="section">
+        <div class="section-header" onclick="toggleSection('benefits')">
+            <span class="toggle-icon">▸</span>
+            <h3>Benefits</h3>
+        </div>
+        <div class="section-content" id="benefits">
+            <ul>
+                <li class="clickable" onclick="toggleSubSection('medical-dental')">
+                    Medical & Dental Insurance
+                    <div class="subsection-content" id="medical-dental">
+                        LCV offers medical and dental insurance coverage, with full premium paid for employees and partial coverage for dependents.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('life-insurance')">
+                    Life Insurance
+                    <div class="subsection-content" id="life-insurance">
+                        Life Insurance and AD&D coverage are provided at no cost to full-time employees.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('401k')">
+                    401(k) Plan
+                    <div class="subsection-content" id="401k">
+                        Employees are eligible to enroll in a 401(k) plan, with LCV matching contributions up to 4% after six months of employment.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('disability-insurance')">
+                    Disability Insurance
+                    <div class="subsection-content" id="disability-insurance">
+                        Short-term and long-term disability insurance is provided, covering 60% of salary during eligible periods.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('smartbenefits')">
+                    SmartBenefits® Program
+                    <div class="subsection-content" id="smartbenefits">
+                        Employees can deduct transportation costs pre-tax through the SmartBenefits® program for transit expenses.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('workers-comp')">
+                    Workers' Compensation
+                    <div class="subsection-content" id="workers-comp">
+                        Workers' Compensation Insurance is provided to all employees for work-related injuries.
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Leave Benefits -->
+    <div class="section">
+        <div class="section-header" onclick="toggleSection('leave')">
+            <span class="toggle-icon">▸</span>
+            <h3>Leave Benefits</h3>
+        </div>
+        <div class="section-content" id="leave">
+            <ul>
+                <li class="clickable" onclick="toggleSubSection('vacation-leave')">
+                    Vacation Leave (15-20 days annually)
+                    <div class="subsection-content" id="vacation-leave">
+                        Employees accrue 15 days of vacation annually for the first three years, increasing to 20 days after four years.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('sick-leave')">
+                    Sick Leave (1 day per month)
+                    <div class="subsection-content" id="sick-leave">
+                        Employees accrue one day of sick leave per month, up to a maximum of 40 days.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('personal-days')">
+                    Personal Days (2 per year)
+                    <div class="subsection-content" id="personal-days">
+                        Employees are entitled to two personal days per year for personal matters, not cumulative.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('fmla')">
+                    Family and Medical Leave
+                    <div class="subsection-content" id="fmla">
+                        Eligible employees may take up to 16 weeks of unpaid family and medical leave within a 24-month period.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('maternity-leave')">
+                    Maternity/Parental Leave
+                    <div class="subsection-content" id="maternity-leave">
+                        One month of paid maternity/parental leave is provided, with an additional five weeks at 40% pay if eligible.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('bereavement')">
+                    Bereavement Leave
+                    <div class="subsection-content" id="bereavement">
+                        Up to three days of paid leave are provided for the funeral of an immediate family member.
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Work Policies -->
+    <div class="section">
+        <div class="section-header" onclick="toggleSection('policies')">
+            <span class="toggle-icon">▸</span>
+            <h3>Work Policies</h3>
+        </div>
+        <div class="section-content" id="policies">
+            <ul>
+                <li class="clickable" onclick="toggleSubSection('work-hours')">
+                    Work Hours: 9:00 AM - 6:00 PM
+                    <div class="subsection-content" id="work-hours">
+                        Standard work hours are 9:00 AM to 6:00 PM, with alternative schedules possible upon supervisor approval.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('flex-schedule')">
+                    Flexible Schedule Options
+                    <div class="subsection-content" id="flex-schedule">
+                        Employees may arrange flexible schedules, provided core hours from 10:00 AM to 4:00 PM are observed.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('remote-work')">
+                    Remote Work Policies
+                    <div class="subsection-content" id="remote-work">
+                        Remote work arrangements may be permitted with supervisor approval, based on job responsibilities.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('tech-usage')">
+                    Technology Usage
+                    <div class="subsection-content" id="tech-usage">
+                        Office equipment and communications are for business use, with reasonable personal use permitted.
+                    </div>
+                </li>
+                <li class="clickable" onclick="toggleSubSection('cell-policy')">
+                    Cell Phone Policy
+                    <div class="subsection-content" id="cell-policy">
+                        Reimbursement for business use of personal cell phones is available, up to $50 or $100 depending on location.
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+            `,
+            branding: `
+<div class="branding-banner">
+    <h2>Maryland LCV Branding and Style Guide</h2>
+    <p>Below you'll find a high-level overview of our branding guidelines, including logo usage, colors, and typeface. For complete details, please refer to the full Branding and Style Guide.</p>
+    <a href="https://docs.google.com/document/d/1fG29fDpldCufRyZgcq42F7qatiOezIdcGNr_eGU1Psk/" 
+        class="branding-button" 
+        target="_blank">
+        View Full Branding and Style Guide <span class="external-link">↗</span>
+    </a>
+</div>
+
+<!-- Branding Content -->
+<div class="branding-sections">
+    <!-- Logo Usage -->
+    <div class="branding-section">
+        <div class="branding-section-header" onclick="toggleBrandingSection('logo-usage')">
+            <span class="toggle-icon">▸</span>
+            <h3>Logo Usage and Style</h3>
+        </div>
+        <div class="branding-section-content" id="logo-usage">
+            <div class="logo-colors">
+                <h4>Primary Logo Color</h4>
+                <p>HEX: <span class="color-code">#81D4AF</span></p>
+                <div class="color-circle" style="background-color: #81D4AF;"></div>
+
+                <h4>Secondary Logo Color</h4>
+                <p>HEX: <span class="color-code">#004F70</span></p>
+                <div class="color-circle" style="background-color: #004F70;"></div>
+
+                <h4>Tertiary Logo Colors</h4>
+                <div class="tertiary-colors">
+                <p>HEX: <span class="color-code">#93D1E3</span></p>
+                <div class="color-circle" style="background-color: #93D1E3;"></div>
+                <p>HEX: <span class="color-code">#665898</span></p>
+                <div class="color-circle" style="background-color: #665898;"></div>
+                                <p>HEX: <span class="color-code">#E17262</span></p>
+                <div class="color-circle" style="background-color: #E17262;"></div>
+                                <p>HEX: <span class="color-code">#F5C04F</span></p>
+                <div class="color-circle" style="background-color: #F5C04F;"></div>
+            </div>
+            <p>Ensure to use the appropriate logo colors depending on the background and usage context. For more specific guidelines, consult the full Branding Guide.</p>
+        </div>
+        </div>
+    </div>
+
+    <!-- Typeface and Fonts -->
+    <div class="branding-section">
+        <div class="branding-section-header" onclick="toggleBrandingSection('typeface-fonts')">
+            <span class="toggle-icon">▸</span>
+            <h3>Font and Typeface Style</h3>
+        </div>
+        <div class="branding-section-content" id="typeface-fonts">
+            <p>Maryland LCV uses two primary typeface families for all communications:</p>
+            <ul>
+                <li><strong>Lato (Sans Serif)</strong>: Used for headings and body text in most digital and print communications for clarity and modern appeal.</li>
+                <li><strong>Lora (Serif)</strong>: Used for more formal communications to add a touch of sophistication.</li>
+            </ul>
+            <p>Use bold or italic variations of these typefaces to add emphasis where needed.</p>
+        </div>
+    </div>
+
+    <!-- Social Media Guidelines -->
+    <div class="branding-section">
+        <div class="branding-section-header" onclick="toggleBrandingSection('social-media')">
+            <span class="toggle-icon">▸</span>
+            <h3>Social Media Communications Guidelines</h3>
+        </div>
+        <div class="branding-section-content" id="social-media">
+            <p>Maryland LCV aims to maintain consistency across all social media channels. The tone should be approachable and engaging, tailored to each platform:</p>
+            <ul>
+                <li><strong>Facebook</strong>: Conversational, encouraging community engagement.</li>
+                <li><strong>Instagram</strong>: Playful and visually appealing, using strong visuals and concise language.</li>
+                <li><strong>LinkedIn</strong>: Professional, focusing on achievements and thought leadership.</li>
+            </ul>
+            <p>Ensure to use branded templates and colors for consistency in posts.</p>
+        </div>
+    </div>
+</div>
+            `,
+            communications: `
+                <section>
+                    <h2>Communications</h2>
+                    <p>Communications content will be displayed here.</p>
+                </section>
+            `,
+            events: `
+    <div class="calendar-container">
+        <div class="navigation">
+            <div class="nav-buttons">
+                <button onclick="navigateCalendar(-1)">Previous Week</button>
+                <button onclick="navigateCalendar(1)">Next Week</button>
+                <button onclick="resetToCurrentWeek()">Current Week</button>
+            </div>
+            <div id="currentWeek"></div>
+        </div>
+        <iframe 
+            id="calendarFrame"
+            class="calendar-frame"
+            src="https://calendar.google.com/calendar/embed?src=mdlcv.org_qroqhf2legl5g7t5p7v8dk713c%40group.calendar.google.com&mode=WEEK&showPrint=0&showTabs=1&showCalendars=0"
+            frameborder="0"
+            scrolling="no">
+        </iframe>
+    </div>
+            `
+        };
+
+        // Function to change view
+        function changeView(view) {
+            document.getElementById('main-content').innerHTML = views[view];
+        }
+
+        // Add click event listeners to nav buttons
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', function() {
+                changeView(this.dataset.view);
+            });
+        });
+
+        // Initialize with home view
+        changeView('home');
+
+        function loadAnnouncements() {
+            const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2V__1HEUDCsx6JeO6HY5ExPyoBk7t2oH_zgSQzT-U_etFHgSuyyBN4pNGrYIPyfkVdC4s_Nf1ZLH1/pub?gid=438083110&single=true&output=csv';
+            
+            console.log('Loading announcements...');
+            
+            fetch(SHEET_URL)
+                .then(response => response.text())
+                .then(data => {
+                    console.log('Received data:', data);
+                    const rows = data.split('\n').map(row => row.split(','));
+                    const announcements = rows.slice(1, 4).map(row => ({ timestamp: row[0], text: row[1] }));
+                    
+                    const announcementList = document.getElementById('announcement-list');
+                    announcementList.innerHTML = '';
+                    
+                    if (announcements.length > 0) {
+                        announcements.forEach(announcement => {
+                            const li = document.createElement('li');
+                            li.textContent = announcement.text;
+                            announcementList.appendChild(li);
+                        });
+                    } else {
+                        const li = document.createElement('li');
+                        li.textContent = 'No recent announcements.';
+                        announcementList.appendChild(li);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading announcements:', error);
+                    document.getElementById('announcement-list').innerHTML = '<li>Error loading announcements. Please try again later.</li>';
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadAnnouncements);
+    </script>
+    <script>
+        const API_KEY = '86976fcb3e86bf07bc4f81617104b281';
+        const CITY_ID = '4347242'; // Annapolis, MD
+        
+        // Fetch current weather
+        fetch(`https://api.openweathermap.org/data/2.5/weather?id=${CITY_ID}&appid=${API_KEY}&units=imperial`)
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('.weather-icon').innerHTML = 
+                    `<img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="${data.weather[0].description}">`;
+                document.querySelector('.current-temp').textContent = 
+                    `${Math.round(data.main.temp)}°F`;
+                document.querySelector('.weather-description').textContent = 
+                    data.weather[0].description;
+                document.querySelector('.humidity').textContent = 
+                    `${data.main.humidity}%`;
+                document.querySelector('.wind').textContent = 
+                    `${Math.round(data.wind.speed)} mph`;
+            });
+        
+        // Fetch 3-day forecast
+        fetch(`https://api.openweathermap.org/data/2.5/forecast?id=${CITY_ID}&appid=${API_KEY}&units=imperial`)
+            .then(response => response.json())
+            .then(data => {
+                const forecasts = data.list.filter(item => 
+                    item.dt_txt.includes('12:00:00')).slice(0, 3);
+                
+                const forecastHTML = forecasts.map(day => `
+                    <div class="forecast-card">
+                        <div class="forecast-date">
+                            ${new Date(day.dt * 1000).toLocaleDateString('en-US', {
+                                weekday: 'short',
+                                month: 'short',
+                                day: 'numeric'
+                            })}
+                        </div>
+                        <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png" 
+                             alt="${day.weather[0].description}">
+                        <div class="forecast-temp">
+                            ${Math.round(day.main.temp)}°F
+                        </div>
+                        <div class="forecast-description">
+                            ${day.weather[0].description}
+                        </div>
+                    </div>
+                `).join('');
+        
+                document.querySelector('.forecast-cards').innerHTML = forecastHTML;
+            });
+
+            /* HR SCRIPT */
+            function toggleSection(sectionId) {
+        const content = document.getElementById(sectionId);
+        const header = content.previousElementSibling;
+        content.classList.toggle('expanded');
+        header.classList.toggle('expanded');
+    }
+
+    function toggleSubSection(subSectionId) {
+        const subContent = document.getElementById(subSectionId);
+        if (subContent.style.display === "none" || subContent.style.display === "") {
+            subContent.style.display = "block";
+            subContent.classList.add('expanded');
+        } else {
+            subContent.style.display = "none";
+            subContent.classList.remove('expanded');
+        }
+    }
+
+
+
+         /* GOOGLE CALENDAR SCRIPT */
+
+         let currentDate = new Date();
+        
+        function formatDateRange(date) {
+            const start = new Date(date);
+            start.setDate(start.getDate() - start.getDay()); // Start of week (Sunday)
+            const end = new Date(start);
+            end.setDate(end.getDate() + 6); // End of week (Saturday)
+            
+            return `${start.toLocaleDateString()} - ${end.toLocaleDateString()}`;
+        }
+
+        function updateCalendar() {
+            const dateString = currentDate.toISOString().split('T')[0];
+            const baseUrl = 'https://calendar.google.com/calendar/embed';
+            const params = new URLSearchParams({
+                src: 'mdlcv.org_qroqhf2legl5g7t5p7v8dk713c@group.calendar.google.com',
+                mode: 'WEEK',
+                dates: dateString,
+                showPrint: '0',
+                showTabs: '1',
+                showCalendars: '0'
+            });
+            
+            document.getElementById('calendarFrame').src = `${baseUrl}?${params.toString()}`;
+            document.getElementById('currentWeek').textContent = formatDateRange(currentDate);
+        }
+
+        function navigateCalendar(weeks) {
+            currentDate.setDate(currentDate.getDate() + (weeks * 7));
+            updateCalendar();
+        }
+
+        function resetToCurrentWeek() {
+            currentDate = new Date();
+            updateCalendar();
+        }
+
+        // Initialize calendar with current week
+        updateCalendar();
+
+
+        /* BRANDING SCRIPT */
+        function toggleBrandingSection(sectionId) {
+        const content = document.getElementById(sectionId);
+        const header = content.previousElementSibling;
+        content.classList.toggle('expanded');
+        header.classList.toggle('expanded');
+    }
+    /* END BRANDING SCRIPT */
+        </script>
+</body>
+</html>
